@@ -27,7 +27,7 @@ Controller is needed.
 
 ## Images
 <p align="left">
-  <img src="imagesForReadMe/v2.0.0/example1.png.png" width="350" title="example1">
+  <img src="imagesForReadMe/v2.0.0/example1.png" width="350" title="example1">
 </p>
 Note that this is the smallest size at the moment.
 
