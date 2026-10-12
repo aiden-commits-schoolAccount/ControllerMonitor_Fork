@@ -1,11 +1,5 @@
-using System;
-using System.IO;
-using System.Text.Json;
-using System.Threading.Tasks;
-
-using Avalonia.Controls;
-using Avalonia.Dialogs;
 using Avalonia.Threading;
+using LunaLib.Text;
 
 using SDL2;
 
@@ -13,8 +7,8 @@ namespace ControllerMonitor;
 
 public partial class Window : Avalonia.Controls.Window
 {
-    public string LanguageFile = "en_us";
-    public string CurrentLanguageFile { get; private set; } = "";
+    public SettingsWindow SettingsWindow { get; private set; }
+    public TranslationsKeeper Translations { get; private set; } = new((string)Data.Json["currentLanguage"], "lang/en_us.json");
     public bool MessageBeingShown { get; private set; } = false;
     public string NoCompatibleControllerMessage = "placeholder";
     private nint controller = nint.Zero;
@@ -22,12 +16,14 @@ public partial class Window : Avalonia.Controls.Window
     private readonly DispatcherTimer Timer_ReadController =
         new() { Interval = TimeSpan.FromMilliseconds(10) };
 
-    private readonly DispatcherTimer Timer_ReloadLanguage =
-        new() { Interval = TimeSpan.FromMilliseconds(250) };
-
     public Window()
     {
         InitializeComponent();
+        File.WriteAllText((string)Data.Json["outputFile"], "Window Initialized\n");
+        this.SettingsWindow = new(this);
+        this.SettingsWindow.Activate();
+
+        this.ReloadLanguage();
 
         // SDL
         if (SDL.SDL_Init(SDL.SDL_INIT_GAMECONTROLLER) < 0)
@@ -43,9 +39,6 @@ public partial class Window : Avalonia.Controls.Window
 
         this.Timer_ReadController.Tick += this.ReadController;
         this.Timer_ReadController.Start();
-
-        this.Timer_ReloadLanguage.Tick += this.ReloadLanguage;
-        this.Timer_ReloadLanguage.Start();
 
         this.Closed += this.Window_Closed;
     }
@@ -117,43 +110,31 @@ public partial class Window : Avalonia.Controls.Window
         this.SteeringBar.Value = steer;
     }
 
-    private void ReloadLanguage(object? sender, EventArgs e)
+    public void UpdateTranslations(string languagePath, string fallBackLanguagePath = "lang/en_us.json")
     {
-        if (this.CurrentLanguageFile != this.LanguageFile)
-        {
-            string LanguagePath = Path.Combine("lang", $"{this.LanguageFile}.json");
+        Data.Json["currentLanguage"] = languagePath;
+        Data.Save();
 
-            if (!File.Exists(LanguagePath))
-                return;
+        this.Translations.LanguagePath = languagePath;
+        this.Translations.FallBackLanguagePath = fallBackLanguagePath;
 
-            string Json = File.ReadAllText(LanguagePath);
+        this.Translations.UpdateTranslations();
+        this.Translations.UpdateFallBackTranslations();
 
-            Dictionary<string, string>? Keys =
-                JsonSerializer.Deserialize<Dictionary<string, string>>(Json);
-
-            if (Keys is null)
-                return;
-
-            this.BrakeLabel.Text = this.GetValue(Keys, "app.label.inputs.l2", ": 0%");
-            this.ThrottleLabel.Text = this.GetValue(Keys, "app.label.inputs.r2", ": 0%");
-            this.SteeringLabel.Text = this.GetValue(Keys, "app.label.inputs.l", ": 0%");
-            this.NoCompatibleControllerMessage = this.GetValue(Keys, "app.messagebox.no_compatible_controller");
-        }
-
-        this.CurrentLanguageFile = this.LanguageFile;
+        this.ReloadLanguage();
     }
-
-    private string GetValue(Dictionary<string, string> Keys, string GetValueOf, string Suffix = "")
+    public void ReloadLanguage()
     {
-        return Keys.TryGetValue(GetValueOf, out string? Value)
-            ? $"{Value ?? string.Empty}{Suffix}"
-            : Suffix;
+        this.BrakeLabel.Text = this.Translations.GetTranslation("app.label.inputs.l2", ["0"]);
+        this.ThrottleLabel.Text = this.Translations.GetTranslation("app.label.inputs.r2", ["0"]);
+        this.SteeringLabel.Text = this.Translations.GetTranslation("app.label.inputs.l", ["0"]);
+        this.NoCompatibleControllerMessage = this.Translations.GetTranslation("app.messagebox.no_compatible_controller");
+        this.SettingsWindow.ReloadLanguage();
     }
 
     private void Window_Closed(object? sender, EventArgs e)
     {
         this.Timer_ReadController.Stop();
-        this.Timer_ReloadLanguage.Stop();
 
         if (this.controller != nint.Zero)
         {
@@ -162,5 +143,22 @@ public partial class Window : Avalonia.Controls.Window
         }
 
         SDL.SDL_Quit();
+
+        Environment.Exit(0); // closes all background threads aswell
+    }
+
+
+    private void SettingsButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        File.AppendAllText((string)Data.Json["outputFile"], "SettingsButton Clicked\n");
+
+        if (this.SettingsWindow.IsVisible)
+        {
+            SettingsWindow.Hide();
+            return;
+        }
+
+        this.SettingsWindow.Show();
+        this.SettingsWindow.Activate();
     }
 }

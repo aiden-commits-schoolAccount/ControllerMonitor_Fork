@@ -1,0 +1,12 @@
+{
+    "app.label.inputs.l2": "what-stop-sign: $%s%",
+    "app.label.inputs.r2": "zoom!: $%s%",
+    "app.label.inputs.l": "wheels: $%s%",
+
+    "app.messagebox.no_compatible_controller": "No compatible controller found. Please connect a controller and restart the application.",
+
+    "app.lebal.settings.change_language": "Edit Speaking",
+
+    "app.label.settings.close_program_on_controller_disconnect": "Close program on controller disconnect",
+    "app.label.settings.include_keybored_inputs": "Include keyboard inputs"
+}

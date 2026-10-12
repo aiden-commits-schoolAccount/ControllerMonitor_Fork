@@ -4,7 +4,7 @@ using Avalonia.Markup.Xaml;
 
 namespace ControllerMonitor;
 
-public partial class App : Avalonia.Application
+public partial class App : Application
 {
     public override void Initialize()
     {

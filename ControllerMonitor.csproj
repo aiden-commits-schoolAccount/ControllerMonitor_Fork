@@ -19,6 +19,8 @@
   <ItemGroup>
   
     <PackageReference Include="NAudio.Sdl2.Library" Version="2.30.3" />
+  
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="SDL2-CS" Version="2.0.0" />
     <PackageReference Include="SDL2-CS.NetCore" Version="2.0.8" />
 
@@ -26,11 +28,31 @@
     <PackageReference Include="Avalonia.Desktop" Version="12.1.2" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.2" />
     <PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.2" />
-
+    
     <PackageReference Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.3">
       <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
       <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
     </PackageReference>
   </ItemGroup>
 
+
+  <Target Name="CopyExtraFoldersToPublish" AfterTargets="Publish">
+   <ItemGroup>
+     <LangFiles Include="$(MSBuildProjectDirectory)\lang\**\*.*" />
+      <DataFiles Include="$(MSBuildProjectDirectory)\data\**\*.*" />
+   </ItemGroup>
+
+   <Copy SourceFiles="@(LangFiles)"
+          DestinationFiles="@(LangFiles->'$(PublishDir)lang\%(RecursiveDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true" />
+
+   <Copy SourceFiles="@(DataFiles)"
+         DestinationFiles="@(DataFiles->'$(PublishDir)data\%(RecursiveDir)%(Filename)%(Extension)')"
+         SkipUnchangedFiles="true" />
+   <MakeDir Directories="$(PublishDir)logs" />
+  </Target>
+
+  <Target Name="CleanPublishDirectory" BeforeTargets="PrepareForPublish">
+    <RemoveDir Directories="$(PublishDir)" />
+  </Target>
 </Project>

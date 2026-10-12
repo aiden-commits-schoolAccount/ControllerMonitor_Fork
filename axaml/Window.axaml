@@ -24,6 +24,7 @@
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
             <TextBlock
@@ -68,6 +69,15 @@
                 Grid.Row="5"
                 Margin="0,0,0,5" />
 
+            <Button
+                x:Name="SettingsButton"
+                Width="30"
+                Height="30"
+                Content="⚙"
+                Click="SettingsButton_Click"
+                FontSize="10"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"/>
         </Grid>
 
     </Grid>
