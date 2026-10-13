@@ -1,4 +1,11 @@
 {
-  "currentLanguage": "lang/en_us.json",
+  "currentLanguage": "lang/dev_test.json",
+  "includeKeyboard": false,
+  "keyBinds": {
+    "throttle": "W",
+    "negSteer": "A",
+    "break": "S",
+    "posSteer": "D"
+  },
   "outputFile": "logs/output.txt"
 }

@@ -25,9 +25,6 @@ public partial class SettingsWindow : Avalonia.Controls.Window
 
     private void LanguageButton_Click(object? sender, RoutedEventArgs e)
     {
-        File.AppendAllText((string)Data.Json["outputFile"], "LanguageButton Clicked\n");
-
-        
         if (ChangeLanguageWindow.IsVisible)
         {
             ChangeLanguageWindow.Hide();

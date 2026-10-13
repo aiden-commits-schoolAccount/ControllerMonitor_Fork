@@ -11,6 +11,8 @@ public partial class Window : Avalonia.Controls.Window
     public TranslationsKeeper Translations { get; private set; } = new((string)Data.Json["currentLanguage"], "lang/en_us.json");
     public bool MessageBeingShown { get; private set; } = false;
     public string NoCompatibleControllerMessage = "placeholder";
+    public WarningBox? NoCompatibleControllerWarningBox;
+    public bool WarningBoxRetrying = false;
     private nint controller = nint.Zero;
 
     private readonly DispatcherTimer Timer_ReadController =
@@ -66,9 +68,33 @@ public partial class Window : Avalonia.Controls.Window
     private async void ReadController(object? sender, EventArgs e)
     {
         SDL.SDL_GameControllerUpdate();
-        if (this.controller == 0 || SDL.SDL_GameControllerGetAttached(this.controller) == SDL.SDL_bool.SDL_FALSE)
+        if (this.NoCompatibleControllerWarningBox?.Skipped != true)
         {
-            return; // wait
+            this.NoCompatibleControllerWarningBox?.SkipButton.IsVisible = (bool)Data.Json["includeKeyboard"];
+            if (this.controller != nint.Zero)
+            {
+                if (SDL.SDL_GameControllerGetAttached(this.controller) == SDL.SDL_bool.SDL_FALSE)
+                {
+                    SDL.SDL_GameControllerClose(this.controller);
+                    this.controller = nint.Zero;
+                }
+            }
+
+            if (this.controller == nint.Zero)
+                this.FindController();
+
+            if (this.controller == nint.Zero)
+            {
+                this.NoCompatibleControllerWarningBox ??= new WarningBox(this);
+
+                if (this.NoCompatibleControllerWarningBox.Message.Text != this.NoCompatibleControllerMessage)
+                    this.NoCompatibleControllerWarningBox.Message.Text = this.NoCompatibleControllerMessage;
+
+                if (!this.NoCompatibleControllerWarningBox.IsVisible)
+                    this.NoCompatibleControllerWarningBox.Show();
+
+                return;
+            }
         }
 
         if (this.controller == nint.Zero)
@@ -107,6 +133,8 @@ public partial class Window : Avalonia.Controls.Window
         this.SteeringLabel.Text = $"{steeringLabelParts[0]} {steer:F0}%";
 
         this.SteeringBar.Value = steer;
+
+        this.NoCompatibleControllerWarningBox?.Hide();
     }
 
     public void UpdateTranslations(string languagePath, string fallBackLanguagePath = "lang/en_us.json")

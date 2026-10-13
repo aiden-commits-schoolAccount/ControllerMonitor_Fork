@@ -38,17 +38,23 @@
 
   <Target Name="CopyExtraFoldersToPublish" AfterTargets="Publish">
    <ItemGroup>
-     <LangFiles Include="$(MSBuildProjectDirectory)\lang\**\*.*" />
+      <LangFiles Include="$(MSBuildProjectDirectory)\lang\**\*.*" />
       <DataFiles Include="$(MSBuildProjectDirectory)\data\**\*.*" />
+      <ReadMeFile Include="$(MSBuildProjectDirectory)\README.md" />
+      <AdvancedReadMeFile Include="$(MSBuildProjectDirectory)\ADVANCED.md" />
    </ItemGroup>
-
-   <Copy SourceFiles="@(LangFiles)"
+    <Copy SourceFiles="@(LangFiles)"
           DestinationFiles="@(LangFiles->'$(PublishDir)lang\%(RecursiveDir)%(Filename)%(Extension)')"
           SkipUnchangedFiles="true" />
 
-   <Copy SourceFiles="@(DataFiles)"
+    <Copy SourceFiles="@(DataFiles)"
          DestinationFiles="@(DataFiles->'$(PublishDir)data\%(RecursiveDir)%(Filename)%(Extension)')"
          SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(ReadMeFile)"
+         DestinationFiles="$(PublishDir)README.md"
+         SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(AdvancedReadMeFile)"
+         DestinationFiles="$(PublishDir)ADVANCED.md" />
    <MakeDir Directories="$(PublishDir)logs" />
   </Target>
 
