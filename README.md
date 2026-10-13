@@ -22,15 +22,13 @@ Controller is needed.
 - May work on linux now! I don't have linux so I can't test
 - Controller must be SDL2‑compatible!
 - If anti-virus scans it then you may need to close it and reopen it for the layering to work correctly.
-- If no controller is pluged in then it will instantly close.
 - I plan on adding more settings later. (lang file already has the names)
 - You can change the language now, though there is only english and a test language...
 
 ## Images
 <p align="left">
-  <img src="imagesForReadMe/v2.1.0/allSettingsOpened.png" width="350" title="example1">
+  <img src="imagesForReadMe/v2.2.0/allMenus.png" width="350" title="example1">
 </p>
-Note that this is the smallest size at the moment.
-
+Note that these are the max amount of menus you can open at once.
 <br>
 <EOF>

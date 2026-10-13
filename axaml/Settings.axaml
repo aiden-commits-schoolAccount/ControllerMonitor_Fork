@@ -19,6 +19,7 @@
         <Grid Margin="30,20">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             
             <Button
@@ -27,8 +28,14 @@
                 Content="Change Language"
                 Click="LanguageButton_Click"
                 FontSize="18"
-                Foreground="LightGray"
-                VerticalAlignment="Center" />
+                Foreground="LightGray" />
+
+            <CheckBox
+                x:Name="IncludeKeyboardInputsBool"
+                Grid.Row="1"
+                Content="Include Keyboard Inputs"
+                IsChecked="False"
+                IsCheckedChanged="IncludeKeyboardInputs_UpdateJson" />
             </Grid>
     </Grid>
 </Window>

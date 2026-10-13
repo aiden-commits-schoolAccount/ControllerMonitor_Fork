@@ -7,8 +7,5 @@
 
     "app.lebal.settings.change_language": "Edit Speaking",
 
-    "app.label.settings.close_program_on_controller_disconnect": "Close program on controller disconnect",
-    
-    "app.label.settings.include_keyboard_inputs": "Include keyboard inputs",
-    "app.lebal.settings.change_keyboard_keybinds": "Change keyboard keybinds"
+    "app.label.settings.close_program_on_controller_disconnect": "Close program on controller disconnect"
 }

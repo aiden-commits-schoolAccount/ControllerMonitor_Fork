@@ -1,4 +1,4 @@
-<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="using:ControllerMonitor" x:Class="ControllerMonitor.WarningBox" Title="Settings" Width="600" SizeToContent="Height" Background="Transparent" TransparencyLevelHint="Transparent" WindowDecorations="Full" Topmost="True">
+<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="using:ControllerMonitor" x:Class="ControllerMonitor.WarningBox" Title="WarningBox" Width="600" SizeToContent="Height" Background="Transparent" TransparencyLevelHint="Transparent" WindowDecorations="Full" Topmost="True">
     <Grid RowDefinitions="Auto,Auto" Margin="20">
         <TextBlock x:Name="Message" Grid.Row="0" TextWrapping="Wrap" HorizontalAlignment="Center" TextAlignment="Center" FontSize="16" Margin="0,0,0,20" />
         <Grid Grid.Row="1" ColumnDefinitions="*,*,*">

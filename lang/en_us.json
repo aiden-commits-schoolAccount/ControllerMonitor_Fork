@@ -3,12 +3,12 @@
     "app.label.inputs.r2": "Throttle: $%s%",
     "app.label.inputs.l": "Steering: $%s%",
 
-    "app.messagebox.no_compatible_controller": "No compatible controller found. Please connect a controller and restart the application.",
+    "app.messagebox.no_compatible_controller": "No compatible controller found.",
 
     "app.lebal.settings.change_language": "Change Language",
     
     "app.label.settings.close_program_on_controller_disconnect": "Close program on controller disconnect",
     
-    "app.label.settings.include_keyboard_inputs": "Include keyboard inputs",
+    "app.label.settings.include_keyboard_inputs": "Include keyboard inputs (no Linux support yet)",
     "app.lebal.settings.change_keyboard_keybinds": "Change keyboard keybinds"
 }

@@ -1,3 +1,5 @@
+using System.Text.Json.Nodes;
+using Avalonia.Input;
 using Avalonia.Threading;
 using LunaLib.Text;
 
@@ -67,6 +69,7 @@ public partial class Window : Avalonia.Controls.Window
 
     private async void ReadController(object? sender, EventArgs e)
     {
+        bool doController = true;
         SDL.SDL_GameControllerUpdate();
         if (this.NoCompatibleControllerWarningBox?.Skipped != true)
         {
@@ -93,48 +96,86 @@ public partial class Window : Avalonia.Controls.Window
                 if (!this.NoCompatibleControllerWarningBox.IsVisible)
                     this.NoCompatibleControllerWarningBox.Show();
 
-                return;
+                doController = false;
             }
         }
 
         if (this.controller == nint.Zero)
-            return;
+            doController = false;
 
-        double brake = SDL.SDL_GameControllerGetAxis(
-            this.controller,
-            SDL.SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_TRIGGERLEFT
-        ) / 32767.0 * 100;
-
-        double throttle = SDL.SDL_GameControllerGetAxis(
-            this.controller,
-            SDL.SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_TRIGGERRIGHT
-        ) / 32767.0 * 100;
-
-        string[] brakeLabelParts = (this.BrakeLabel.Text ?? string.Empty).Split(" ");
-        this.BrakeLabel.Text = $"{brakeLabelParts[0]} {brake:F0}%";
+        var keyBinds = (Dictionary<string, Object?>)Data.Json["keyBinds"];
 
         string[] throttleLabelParts = (this.ThrottleLabel.Text ?? string.Empty).Split(" ");
-        this.ThrottleLabel.Text = $"{throttleLabelParts[0]} {throttle:F0}%";
-
-        this.BrakeBar.Value = (int)Math.Round(brake);
-        this.ThrottleBar.Value = (int)Math.Round(throttle);
-
-        int steer = (int)Math.Round(
-            SDL.SDL_GameControllerGetAxis(
-                this.controller,
-                SDL.SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_LEFTX
-            ) / 32767.0 * 100
-        );
-
-        if (Math.Abs(steer) <= 5)
-            steer = 0;
-
+        string[] brakeLabelParts = (this.BrakeLabel.Text ?? string.Empty).Split(" ");
         string[] steeringLabelParts = (this.SteeringLabel.Text ?? string.Empty).Split(" ");
-        this.SteeringLabel.Text = $"{steeringLabelParts[0]} {steer:F0}%";
 
-        this.SteeringBar.Value = steer;
+        if (doController)
+        {
+            double brake = SDL.SDL_GameControllerGetAxis(
+                this.controller,
+                SDL.SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_TRIGGERLEFT
+            ) / 32767.0 * 100;
 
-        this.NoCompatibleControllerWarningBox?.Hide();
+            double throttle = SDL.SDL_GameControllerGetAxis(
+                this.controller,
+                SDL.SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_TRIGGERRIGHT
+            ) / 32767.0 * 100;
+
+            this.BrakeLabel.Text = $"{brakeLabelParts[0]} {brake:F0}%";
+
+            this.ThrottleLabel.Text = $"{throttleLabelParts[0]} {throttle:F0}%";
+
+            this.BrakeBar.Value = (int)Math.Round(brake);
+            this.ThrottleBar.Value = (int)Math.Round(throttle);
+
+            int steer = (int)Math.Round(
+                SDL.SDL_GameControllerGetAxis(
+                    this.controller,
+                    SDL.SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_LEFTX
+                ) / 32767.0 * 100
+            );
+
+            if (Math.Abs(steer) <= 5)
+                steer = 0;
+
+            this.SteeringLabel.Text = $"{steeringLabelParts[0]} {steer:F0}%";
+
+            this.SteeringBar.Value = steer;
+
+            this.NoCompatibleControllerWarningBox?.Hide();
+        }
+
+        
+
+        if (!(bool)Data.Json["includeKeyboard"])
+            return;
+
+        if (keyBinds["throttle"] is string throttleKey && Input.IsKeyPressed(throttleKey))
+        {
+            this.ThrottleBar.Value = 100;
+            this.ThrottleLabel.Text = $"{throttleLabelParts[0]} 100%";
+        }
+
+        if (keyBinds["brake"] is string brakeKey && Input.IsKeyPressed(brakeKey))
+        {
+            this.BrakeBar.Value = 100;
+            this.BrakeLabel.Text = $"{brakeLabelParts[0]} 100%";
+        }
+
+        int keyboardSteer = 0;
+
+        if (keyBinds["negSteer"] is string negSteerKey && Input.IsKeyPressed(negSteerKey))
+        {
+            keyboardSteer = -100;
+        }
+
+        if (keyBinds["posSteer"] is string posSteerKey && Input.IsKeyPressed(posSteerKey))
+        {
+            keyboardSteer = 100;
+        }
+
+        this.SteeringLabel.Text = $"{steeringLabelParts[0]} {keyboardSteer:F0}%";
+        this.SteeringBar.Value = keyboardSteer;
     }
 
     public void UpdateTranslations(string languagePath, string fallBackLanguagePath = "lang/en_us.json")
