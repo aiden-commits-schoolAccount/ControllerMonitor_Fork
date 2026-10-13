@@ -68,8 +68,7 @@ public partial class Window : Avalonia.Controls.Window
         SDL.SDL_GameControllerUpdate();
         if (this.controller == 0 || SDL.SDL_GameControllerGetAttached(this.controller) == SDL.SDL_bool.SDL_FALSE)
         {
-            Environment.Exit(0);
-            return;
+            return; // wait
         }
 
         if (this.controller == nint.Zero)
