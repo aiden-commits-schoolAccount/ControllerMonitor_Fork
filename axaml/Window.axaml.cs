@@ -174,7 +174,7 @@ public partial class Window : Avalonia.Controls.Window
             keyboardSteer = 100;
         }
 
-        if (keyboardSteer > 0)
+        if (Math.Abs(keyboardSteer) > 0)
         {
             this.SteeringLabel.Text = $"{steeringLabelParts[0]} {keyboardSteer:F0}%";
             this.SteeringBar.Value = keyboardSteer;
