@@ -175,7 +175,10 @@ public partial class Window : Avalonia.Controls.Window
         }
 
         this.SteeringLabel.Text = $"{steeringLabelParts[0]} {keyboardSteer:F0}%";
-        this.SteeringBar.Value = keyboardSteer;
+        if (keyboardSteer > 0)
+        {
+            this.SteeringBar.Value = keyboardSteer;
+        }
     }
 
     public void UpdateTranslations(string languagePath, string fallBackLanguagePath = "lang/en_us.json")
